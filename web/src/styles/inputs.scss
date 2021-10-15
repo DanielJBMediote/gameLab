@@ -1,0 +1,53 @@
+
+@import './colors';
+
+
+input[type="email"],
+input[type="password"],
+input[type="text"] {
+  font-family: "Roboto", sans-serif;
+  height: 40px;
+  width: 235px;
+  font-size: 15px;
+  border: 0;
+  line-height: 20px;
+  margin: 10px 0;
+  text-align: start;
+  padding-left: 20px;
+  background: #c4c4c4;
+  outline: none;
+  color: $font-dark;
+  transition: background-color 0.3s;
+  border-radius: 15px;
+  &:focus {
+    background: #c4c4c4ce;
+  }
+  
+  &:disabled {
+    opacity: 0.5;
+  }
+  
+  &.required, &.danger {
+    border: 1px solid $danger;
+    transition: border-color .5s;
+  }
+  
+}
+
+span.spinner {
+  content: '';
+  box-sizing: border-box;
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  margin-left: 220px;
+  border-radius: 50%;
+  border: 2px solid #ccc;
+  border-top-color: #000;
+  animation: spinner .6s linear infinite;
+}
+
+@keyframes spinner {
+  to {transform: rotate(360deg);}
+}
+

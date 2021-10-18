@@ -7,10 +7,6 @@
     {
       "path": "./web",
       "name": "WEB"
-    },
-    {
-      "path": "./mobile",
-      "name": "MOBILE"
     }
   ],
   "settings": {},

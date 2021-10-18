@@ -12,7 +12,7 @@ export default class ServiceCommand extends BaseCommand {
    * Command description is displayed in the "help" output
    */
 
-  public static description = 'Make a new service'
+  public static description = 'Make a new service file'
 
   @flags.boolean({
     name: 'repository',

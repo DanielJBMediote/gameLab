@@ -7,7 +7,7 @@
       },
       "commandPath": "./commands/ServiceCommand",
       "commandName": "make:service",
-      "description": "Make a new service",
+      "description": "Make a new service file",
       "args": [
         {
           "type": "string",

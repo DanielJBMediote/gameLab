@@ -43,11 +43,11 @@ export class CreateUser {
    * @returns User and Profile stored
    */
   async execute({ request, response }: HttpContextContract) {
-    const { name, email, password, username } = request.body()
+    const { fullname, email, password, username } = request.body()
     const trx = await Database.transaction()
 
     try {
-      const user = await UsersRepository.create(trx, { name, email, password })
+      const user = await UsersRepository.create(trx, { fullname, email, password })
       if (!user) throw new Exception('Failed to create user', 400)
       const profile = await ProfilesRepository.create(trx, { username }, user)
       if (!profile) throw new Exception('Failed to create profile', 400)

@@ -1,6 +1,6 @@
 import { DateTime } from 'luxon'
 import Hash from '@ioc:Adonis/Core/Hash'
-import { column, beforeSave, BaseModel, beforeCreate, beforeUpdate } from '@ioc:Adonis/Lucid/Orm'
+import { column, beforeSave, BaseModel, beforeCreate } from '@ioc:Adonis/Lucid/Orm'
 import { v4 as uuid } from 'uuid'
 
 export default class Users extends BaseModel {
@@ -8,7 +8,7 @@ export default class Users extends BaseModel {
   public id: number
 
   @column()
-  public name: string
+  public fullname: string
 
   @column()
   public email: string

@@ -2,7 +2,7 @@ import { TransactionClientContract } from '@ioc:Adonis/Lucid/Database'
 import Users from 'App/Models/Users'
 
 interface IUserData {
-  name?: string
+  fullname?: string
   email?: string
   password?: string
 }
@@ -21,7 +21,7 @@ export default class UsersRepository {
 
   static async create(
     trx: TransactionClientContract,
-    data: { name: string; email: string; password: string }
+    data: { fullname: string; email: string; password: string }
   ): Promise<Users> {
     return await Users.create(data, { client: trx })
   }
@@ -29,15 +29,11 @@ export default class UsersRepository {
   static async update(
     trx: TransactionClientContract,
     id: number,
-    { name, email, password }: IUserData
+    data: IUserData
   ) {
     const user = await Users.findOrFail(id)
 
-    user.merge({
-      name,
-      password,
-      email,
-    })
+    user.merge(data)
 
     user.useTransaction(trx)
     return user.save()

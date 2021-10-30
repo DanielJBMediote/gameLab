@@ -5,12 +5,13 @@ export default class Profiles extends BaseSchema {
 
   public async up () {
     this.schema.alterTable(this.tableName, (table) => {
-      table.integer('avatar_file').references('id').inTable('files')
+      table.integer('file_id').references('id').inTable('files').onDelete('CASCADE')
     })
   }
 
   public async down () {
     this.schema.alterTable(this.tableName, (table) => {
+      table.dropColumn('file_id')
     })
   }
 }

@@ -1,37 +1,29 @@
-import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
+import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext';
 import {
   CreateUser,
   DeleteUser,
   ReadAllUser,
   ReadUser,
-  UpdateUser,
-} from 'App/Services/UserProfilesService'
+  UpdateUser
+} from 'App/Services/UsersServices';
 
 export default class UsersController {
+  
+  async logged(ctx: HttpContextContract) {
+    return await new ReadUser().getByToken(ctx)
+  }
+
   public async index({}: HttpContextContract) {
     return await new ReadAllUser().execute()
   }
 
-  public async create({}: HttpContextContract) {}
-
   public async store(ctx: HttpContextContract) {
-    return await new CreateUser().execute(ctx)
+    return await CreateUser.execute(ctx);
   }
 
-  public async showByToken({ auth }: HttpContextContract) {
-    const user = auth.use('api').user
-    return await new ReadUser().execute(user!.id)
+  public async show(ctx: HttpContextContract) {
+    return await new ReadUser().execute(ctx)
   }
-
-  public async showByUsername(ctx: HttpContextContract) {
-    return await new ReadUser().executeFindByUsername(ctx)
-  }
-
-  public async show({ params }: HttpContextContract) {
-    return await new ReadUser().execute(params.id)
-  }
-
-  public async edit({}: HttpContextContract) {}
 
   public async update(ctx: HttpContextContract) {
     const data = ctx.request.body()

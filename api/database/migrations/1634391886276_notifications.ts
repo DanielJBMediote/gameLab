@@ -10,6 +10,7 @@ export default class Notifications extends BaseSchema {
       table.string('message', 255).notNullable()
       table.boolean('is_readed').defaultTo(false)
       table.integer('user_id').references('id').inTable('users')
+      
       /**
        * Uses timestamptz for PostgreSQL and DATETIME2 for MSSQL
        */

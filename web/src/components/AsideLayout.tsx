@@ -1,19 +1,13 @@
 import React from "react";
 
+import RegisterPageImage from "../assets/horrorImage.svg";
 
-interface IAsideProps {
-  text?: string
-  imageUrl?: string
-}
-
-
-export default class Aside extends React.Component <IAsideProps>{
+export default class Aside extends React.Component {
 
   render() {
     return (
       <aside>
-        <img src={this.props.imageUrl} alt="Online" />
-        <p>{this.props.text}</p>
+        <img src={RegisterPageImage} alt="Online" />
       </aside>
     )
   }

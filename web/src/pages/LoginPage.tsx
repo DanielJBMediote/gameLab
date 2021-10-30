@@ -1,104 +1,104 @@
-import React, { FormEvent } from "react";
-import { Link, useHistory } from "react-router-dom";
-import { AuthContext } from "../App";
-import GameLogo from "../assets/gameLab_logo.svg";
-import LoginPageImage from "../assets/LoginPageImage.svg";
-import AsideLayout from "../components/AsideLayout";
-import { FlatButton } from "../components/CustomButtons";
-import { InputText } from "../components/CustomInputs";
+import React, { FormEvent } from 'react';
+import { Link, useHistory } from 'react-router-dom';
+import { Form, Input, Message } from 'semantic-ui-react';
+import { AuthContext } from '../App';
+import GameLogo from '../assets/logo.svg';
+import AnimatedBackground from '../components/AnimatedBackground';
+import { MyButton } from '../components/Button';
 
 export default function LoginPage() {
-  const [customAlert, setCustomAlert] = React.useState("");
-  const [loginForm, setLoginForm] = React.useState({});
-  const [isLoading, setIsLoading] = React.useState<boolean>(false)
+  const [error, setError] = React.useState({ status: false, message: '' });
+  const [data, setData] = React.useState({});
+  const [isLoading, setIsLoading] = React.useState<boolean>(false);
   const { user, apiSignIn } = React.useContext(AuthContext);
   const history = useHistory();
 
   if (user) {
-    history.push("/home");
+    history.push('/home');
   }
 
-  async function handleChange(
-    e: React.ChangeEvent<HTMLInputElement>
-  ): Promise<void> {
+  async function handleChange(e: React.ChangeEvent<HTMLInputElement>): Promise<void> {
     const target = e.target;
-    const value = target.type === "checkbox" ? target.checked : target.value;
+    const value = target.type === 'checkbox' ? target.checked : target.value;
     const name = target.name;
 
-    setLoginForm({ ...loginForm, [name]: value });
+    setData({ ...data, [name]: value });
   }
 
-  async function handleBlur(
-    e: React.ChangeEvent<HTMLInputElement>
-  ): Promise<void> {
+  async function handleBlur(e: React.ChangeEvent<HTMLInputElement>): Promise<void> {
     const target = e.target;
-    const value = target.type === "checkbox" ? target.checked : target.value;
-    // const name = target.name;
+    const value = target.type === 'checkbox' ? target.checked : target.value;
 
-    target.className = value === "" ? "required" : "";
+    target.className = value === '' ? 'required' : '';
   }
-  
-  async function handleSubmit(event: FormEvent): Promise<void> {
 
+  /**
+   * Submit function to Post new User
+   * @param event
+   */
+  async function handleSubmit(event: FormEvent): Promise<void> {
     setIsLoading(true);
 
-    apiSignIn(loginForm)
-      .then((response) => {
-        
-        localStorage.setItem("auth-token", response.data.token);
-        history.push("/home");
-      })
-      .catch((error) => {
-        
-        if ([400, 401, 422].includes(error.response.status)) {
-          setCustomAlert(error.response.data.error.msg);
-        }
-      })
-      .finally(() => {
-        setIsLoading(false);
-      })
+    await apiSignIn(data).catch((error) => {
+      if ([400, 401, 422].includes(error.response.status)) {
+        setError({ status: true, message: 'Invalid username or password' });
+      }
+    });
+    setIsLoading(false);
 
     event.preventDefault();
   }
 
   return (
-    <div>
-      <AsideLayout
-        imageUrl={LoginPageImage}
-        text="Uma nova forma de conectar com seus amigos"
-      />
-      <div className="form-modal">
-        <img src={GameLogo} alt="Logo" />
-        <form>
-          <div className="form-login">
-            <InputText
-              type="email"
-              name="email"
-              onChange={handleChange}
-              onBlur={handleBlur}
-              required
-              placeholder="E-mail"
-              disabled={isLoading}
-              />
-            <InputText
-              type="password"
-              name="password"
-              onChange={handleChange}
-              onBlur={handleBlur}
-              placeholder="Senha"
-              disabled={isLoading}
-            />
-            <p className="alert">{customAlert}</p>
-            <FlatButton disabled={isLoading} type="button" onClick={handleSubmit}>
-              {isLoading ? <span className="spinner"></span> : "Entrar"}
-            </FlatButton>
+    <>
+      <div className="container">
+        <AnimatedBackground />
+        <div className="form-modal">
+          <div>
+            <img src={GameLogo} alt="Logo" />
+            <Form error={error.status}>
+              <div className="form-inputs">
+                <Input
+                  type="email"
+                  name="email"
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  placeholder="E-mail"
+                  iconPosition="left"
+                  icon="user"
+                  size="large"
+                  disabled={isLoading}
+                />
+                <Input
+                  type="password"
+                  name="password"
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  placeholder="Password"
+                  iconPosition="left"
+                  loading={isLoading}
+                  n="left"
+                  icon="key"
+                  size="large"
+                  disabled={isLoading}
+                />
+                <Message error content={error.message} floating />
+                <MyButton
+                  className="btn-primary"
+                  color="primary"
+                  onClick={handleSubmit}
+                  loading={isLoading}
+                  label="Sign In"
+                />
+              </div>
+            </Form>
+            <div className="form-links">
+              <p>Does not have account? &nbsp;</p>
+              <Link to="/register">Sign up</Link>
+            </div>
           </div>
-        </form>
-        <div>
-          <p>É novo na area? &nbsp;</p>
-          <Link to="/register">Criar conta</Link>
         </div>
       </div>
-    </div>
+    </>
   );
 }

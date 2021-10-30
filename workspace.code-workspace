@@ -2,13 +2,18 @@
   "folders": [
     {
       "path": "./api",
-      "name": "API"
+      "name": "api"
     },
     {
       "path": "./web",
-      "name": "WEB"
+      "name": "web"
     }
   ],
-  "settings": {},
+  "settings": {
+    "typescript.tsdk": "api/node_modules/typescript/lib",
+    "cSpell.words": [
+      "adonisjs"
+    ]
+  },
   
 }

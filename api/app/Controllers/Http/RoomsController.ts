@@ -1,7 +1,6 @@
 import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
-import { ReadFile } from 'App/Services/FilesServices';
 
-export default class FilesController {
+export default class RoomsController {
   public async index ({}: HttpContextContract) {
   }
 
@@ -11,8 +10,7 @@ export default class FilesController {
   public async store ({}: HttpContextContract) {
   }
 
-  public async show (ctx: HttpContextContract) {
-    return await ReadFile.execute(ctx)
+  public async show ({}: HttpContextContract) {
   }
 
   public async edit ({}: HttpContextContract) {

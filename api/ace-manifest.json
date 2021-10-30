@@ -5,7 +5,7 @@
         "loadApp": false,
         "stayAlive": false
       },
-      "commandPath": "./commands/ServiceCommand",
+      "commandPath": "./commands/CreateServicesCommand",
       "commandName": "make:service",
       "description": "Make a new service file",
       "args": [

@@ -1,45 +1,50 @@
-import { TransactionClientContract } from '@ioc:Adonis/Lucid/Database'
-import Users from 'App/Models/Users'
-
-interface IUserData {
-  fullname?: string
-  email?: string
-  password?: string
-}
+import { TransactionClientContract } from '@ioc:Adonis/Lucid/Database';
+import Users from 'App/Models/Users';
+import lodash from 'lodash';
 
 export default class UsersRepository {
-  static async findBy(type: string, value: any): Promise<Users | null> {
-    return await Users.findByOrFail(type, value)
+  
+  private static fillable = [
+    'email',
+    'password'
+  ]
+  
+  static async findBy(field: string, value: any): Promise<Users | null> {
+    return await Users.findByOrFail(field, value);
   }
   static async findAll() {
-    return await Users.query()
+    return await Users.query();
   }
 
-  static async findOne(id: number | undefined): Promise<Users | null> {
-    return await Users.find(id)
+  static async findOne(id: number): Promise<Users | null> {
+    const user =  await Users.find(id)
+    await user?.load('profile', query => {
+      query.preload('avatar')
+    })
+    return user
   }
 
-  static async create(
-    trx: TransactionClientContract,
-    data: { fullname: string; email: string; password: string }
-  ): Promise<Users> {
-    return await Users.create(data, { client: trx })
+  static async create(data: Record<string, any>, trx: TransactionClientContract): Promise<Users> {
+    const user = new Users();
+    const newData = lodash.pick(data, this.fillable);
+    
+    user.fill({...newData});
+    user.useTransaction(trx);
+
+    return await user.save();
   }
 
-  static async update(
-    trx: TransactionClientContract,
-    id: number,
-    data: IUserData
-  ) {
-    const user = await Users.findOrFail(id)
+  static async update(trx: TransactionClientContract, id: number, data: Record<string,any>) {
+    const user = await Users.findOrFail(id);
+    const newData = lodash.pick(data, this.fillable);
 
-    user.merge(data)
+    user.merge({...newData});
+    user.useTransaction(trx);
 
-    user.useTransaction(trx)
-    return user.save()
+    return user.save();
   }
 
   static async delete(id: number) {
-    return (await Users.findOrFail(id)).delete()
+    return (await Users.findOrFail(id)).delete();
   }
 }

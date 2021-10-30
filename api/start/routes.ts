@@ -18,20 +18,40 @@
 |
 */
 
-import Route from '@ioc:Adonis/Core/Route'
-
-// Route.post('/login', async ({ auth, request, response }) => {
-//   const { email, password } = request.body()
-//   try {
-//     return await auth.use('api').attempt(email, password)
-//   } catch {
-//     return response.badRequest('Invalid credentials')
-//   }
-// })
-
-Route.post('/login', 'SessionsController.store')
-Route.get('/logout', 'SessionsController.destroy').middleware(['auth'])
+import Route from '@ioc:Adonis/Core/Route';
 
 Route.get('', async () => {
-  return { hello: 'world' }
-})
+  return { hello: 'world' };
+});
+
+// Session routes --------------------------------------------------------------
+
+Route.group(() => {
+  Route.post('/login', 'SessionsController.store');
+  Route.get('/logout', 'SessionsController.destroy').middleware(['auth']);
+}).prefix('/session');
+
+// Users routes ----------------------------------------------------------------
+
+Route.group(() => {
+  Route.post('/', 'UsersController.store');
+  Route.get('/:id', 'UsersController.show');
+
+  Route.group(() => {
+    Route.get('/logged', 'UsersController.logged');
+    Route.get('/', 'UsersController.index');
+    Route.put('/', 'UsersController.update');
+    Route.delete('/', 'UsersController.destroy');
+  }).middleware(['auth']);
+}).prefix('/users');
+
+// Profiles routes -------------------------------------------------------------
+
+Route.group(() => {
+  Route.get('/:id', 'ProfilesController.show');
+  Route.get('/usernames/:username', 'ProfilesController.show')
+}).prefix('/profiles');
+
+Route.group(() => {
+  Route.get('/:id', 'FilesController.show');
+}).prefix('/files');

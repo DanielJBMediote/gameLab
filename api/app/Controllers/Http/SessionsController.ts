@@ -1,5 +1,5 @@
 import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
-import { CreateSession, DestorySession } from 'App/Services/SessionService'
+import { CreateSession, DestroySession } from 'App/Services/SessionsServices'
 
 export default class SessionsController {
   async store(ctx: HttpContextContract) {
@@ -7,7 +7,7 @@ export default class SessionsController {
   }
 
   async destroy(ctx: HttpContextContract) {
-    return await new DestorySession().execute(ctx)
+    return await new DestroySession().execute(ctx)
   }
 
   async index({}: HttpContextContract) {}

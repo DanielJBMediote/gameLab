@@ -1,18 +1,13 @@
 import BaseSchema from '@ioc:Adonis/Lucid/Schema'
 
-export default class Files extends BaseSchema {
-  protected tableName = 'files'
+export default class AlterUsers extends BaseSchema {
+  protected tableName = 'alter_users'
 
   public async up () {
     this.schema.createTable(this.tableName, (table) => {
       table.increments('id')
-      table.uuid('uuid')
-      table.string('filename')
-      table.string('clientname')
-      table.string('type')
-      table.string('subtype')
-      table.string('extname')
-      table.float('size')
+      table.integer('profile_id').references('id').inTable('profiles').onDelete('CASCADE')
+
       /**
        * Uses timestamptz for PostgreSQL and DATETIME2 for MSSQL
        */
@@ -22,6 +17,8 @@ export default class Files extends BaseSchema {
   }
 
   public async down () {
-    this.schema.dropTable(this.tableName)
+    this.schema.alterTable(this.tableName, (table) => {
+      table.dropColumn('profile_id')
+    })
   }
 }

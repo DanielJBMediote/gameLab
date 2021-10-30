@@ -1,4 +1,4 @@
-import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
+import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext';
 /**
  * Service for SessionService
  */
@@ -6,16 +6,13 @@ import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 export class CreateSession {
   public async execute({ request, response, auth }: HttpContextContract) {
     const { email, password } = request.body()
-
+    
     try {
-      if (email === '' || password === '') throw new Error('Invalid email or password')
-
+      if (email === '' || password === '')
+        throw new Error('Invalid email or password')
       return await auth.use('api').attempt(email, password)
-    } catch (err: any) {
-      if (err instanceof Error) {
-        err.message = 'Invalid credentials.'
-      }
-      return response.status(err.status).send({
+    } catch (err) {
+      return response.status(400).send({
         error: {
           msg: err.message,
           code: err.code,
@@ -25,7 +22,7 @@ export class CreateSession {
   }
 }
 
-export class DestorySession {
+export class DestroySession {
   public async execute({ auth, response }: HttpContextContract) {
     try {
       await auth.use('api').authenticate()

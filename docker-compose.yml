@@ -1,0 +1,77 @@
+version: '3'
+
+services:
+  database:
+    container_name: gamelab_db
+    image: postgres
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=root
+      - POSTGRES_DATABASE=gamelab
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      dockernet:
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+  
+  # Serviço da API
+  api:
+    container_name: gamelab_api
+    # restart: always
+    environment: 
+      WAIT_HOST: database:5432
+    build:
+      context: ./
+      dockerfile: ./dockerfiles/api.dockerfile
+    env_file:
+      - ./api/.env
+    ports:
+      - "3333:3333"
+    volumes:
+      # - ./api/.env:/api/.env
+      - ./api:/api
+    networks:
+      dockernet:
+        # ipv4_address: 172.20.0.4
+    depends_on:
+      database:
+        condition: service_healthy
+    healthcheck:
+        test: "echo 'Service Ready Up'"
+        interval: 10s
+        timeout: 10s
+        retries: 3
+    command: sh -c "node ace migration:refresh && npm dev"
+
+  # Serviço do Website
+  web:
+    container_name: gamelab_web
+    tty: true
+    # restart: always
+    command: [ "npm", "start"]
+    environment: 
+      WAIT_HOST: 3333:3333
+    build:
+      context: ./
+      dockerfile: ./dockerfiles/web.dockerfile
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./web:/web
+    depends_on:
+      api:
+        condition: service_healthy
+    networks:
+      dockernet:
+        # ipv4_address: 172.20.0.5
+
+
+networks:
+  dockernet:
+    driver: bridge

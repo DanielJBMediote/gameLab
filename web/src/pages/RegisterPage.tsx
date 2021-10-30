@@ -1,120 +1,116 @@
-import React, { FormEvent } from "react";
-import AsideLayout from "../components/AsideLayout";
-import GameLogo from "../assets/gameLab_logo.svg";
-import RegisterPageImage from "../assets/horrorImage.svg";
-import { InputText } from "../components/CustomInputs";
-import { FlatButton } from "../components/CustomButtons";
-import { useHistory } from "react-router";
-import { AuthContext } from "../App";
-import { Link } from "react-router-dom";
-import { Axios } from "../services/axios";
+import React, { FormEvent } from 'react';
+import { useHistory } from 'react-router';
+import { Link } from 'react-router-dom';
+import { Form, Input, Message } from 'semantic-ui-react';
+import { AuthContext } from '../App';
+import GameLogo from '../assets/logo.svg';
+import AnimatedBackground from '../components/AnimatedBackground';
+import { MyButton } from '../components/Button';
+import { Axios } from '../services/axios';
 
 export default function RegisterPage() {
-  const [customAlert, setCustomAlert] = React.useState("");
-  const [registerForm, setRegisterForm] = React.useState({});
+  const [error, setError] = React.useState({ status: false, msg: '' });
+  const [isInputUsername, setInputUsername] = React.useState({
+    loading: false,
+    detail: {},
+  });
+  const [registerData, setRegisterData] = React.useState({});
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
-  const [isLoadingInput, setIsLoadingInput] = React.useState<boolean>(false);
   const { user } = React.useContext(AuthContext);
   const history = useHistory();
 
   if (user) {
-    history.push("/home");
-  }
-
-  async function handleChange(e: React.ChangeEvent<HTMLInputElement>): Promise<void> {
-    const target = e.target;
-    const value = target.type === "checkbox" ? target.checked : target.value;
-    const name = target.name;
-
-    setRegisterForm({ ...registerForm, [name]: value });
+    history.push('/home');
   }
 
   async function handleBlur(e: React.ChangeEvent<HTMLInputElement>): Promise<void> {
     const target = e.target;
-    const value = target.type === "checkbox" ? target.checked : target.value;
+    const value = target.type === 'checkbox' ? target.checked : target.value;
     const name = target.name;
 
-    if (name === "username") {
-      setIsLoadingInput(true);
-
-      await Axios.get(`/users/username-check/${value}`)
-        .then((response) => {
-          console.log(response);
-        })
-        .catch((error) => {
-          console.log(error);
-        })
-        .finally(() => {
-          setIsLoadingInput(false);
-        });
+    if (name === 'username') {
+      Axios.get('');
     }
 
-    target.className = value === "" ? "required" : "";
+    setRegisterData({ ...registerData, [name]: value });
   }
 
   async function handleSubmit(event: FormEvent): Promise<void> {
-    // if (
-    //   Object.values(registerForm)[0] === "" ||
-    //   Object.values(registerForm)[1] === ""
-    // ) {
-    //   return;
-    // }
+    setIsLoading(true);
 
-    // setLoading(true);
+    Axios.post('/users', registerData)
+      .then((response) => {})
+      .catch((error) => {
+        console.log(error);
+        if ([400, 401, 422].includes(error.response.status)) {
+          setError({ status: true, msg: 'deu pau' });
+          console.log(error.response.message);
+        }
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
 
     event.preventDefault();
   }
 
   return (
-    <div>
-      <AsideLayout
-        imageUrl={RegisterPageImage}
-        text="Uma nova forma de conectar com seus amigos"
-      />
+    <div className="container">
+      <AnimatedBackground />
       <div className="form-modal">
-        <img src={GameLogo} alt="Logo" />
-        <form>
-          <div className="form-login">
-            <InputText
-              type="text"
-              name="username"
-              onChange={handleChange}
-              onBlur={handleBlur}
-              required
-              placeholder="Username"
-              className="spinner"
-              haveSpinner={isLoadingInput}
-            />
-            <InputText
-              type="email"
-              name="email"
-              onChange={handleChange}
-              onBlur={handleBlur}
-              placeholder="E-mail"
-            />
-            <InputText
-              type="password"
-              name="repeat_password"
-              onChange={handleChange}
-              onBlur={handleBlur}
-              placeholder="Password"
-            />
-            <InputText
-              type="password"
-              name="password"
-              onChange={handleChange}
-              onBlur={handleBlur}
-              placeholder="Reapeat Password"
-            />
-            <p className="alert">{customAlert}</p>
-            <FlatButton type="button" onClick={handleSubmit}>
-              {isLoading ? <span className="spinner"></span> : "Entrar"}
-            </FlatButton>
-          </div>
-        </form>
         <div>
-          <p>Já tem cadastro? &nbsp;</p>
-          <Link to="/login">Entrar agora</Link>
+          <img src={GameLogo} alt="Logo" />
+          <Form error={error.status}>
+            <div className="form-inputs">
+              <Input
+                name="username"
+                placeholder="Username"
+                onBlur={handleBlur}
+                icon="user"
+                iconPosition="left"
+                size="large"
+                type="text"
+                loading={isInputUsername.loading}
+                disabled={isLoading}
+              />
+              <Input
+                type="email"
+                name="email"
+                placeholder="E-mail"
+                onBlur={handleBlur}
+                icon="envelope"
+                iconPosition="left"
+                size="large"
+                disabled={isLoading}
+              />
+              <Input
+                type="password"
+                name="repeat_password"
+                onBlur={handleBlur}
+                placeholder="Password"
+                icon="key"
+                iconPosition="left"
+                size="large"
+                disabled={isLoading}
+              />
+              <Input
+                type="password"
+                name="password"
+                onBlur={handleBlur}
+                iconPosition="left"
+                placeholder="Repeat Password"
+                icon="key"
+                size="large"
+                disabled={isLoading}
+              />
+              <Message error content={error.msg} compact />
+              <MyButton loading={isLoading} onClick={handleSubmit} label="Sign Up" />
+            </div>
+          </Form>
+          <div className="form-links">
+            <p>Already have an account? &nbsp;</p>
+            <Link to="/login">Sign in</Link>
+          </div>
         </div>
       </div>
     </div>

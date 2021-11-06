@@ -2,11 +2,11 @@ import React, { FormEvent } from 'react';
 import { useHistory } from 'react-router';
 import { Link } from 'react-router-dom';
 import { Form, Input, Message } from 'semantic-ui-react';
-import { AuthContext } from '../App';
-import GameLogo from '../assets/logo.svg';
-import AnimatedBackground from '../components/AnimatedBackground';
-import { MyButton } from '../components/Button';
-import { Axios } from '../services/axios';
+import { AuthContext } from '@src:Contexts/AuthContextProvider';
+import GameLogo from '@src:Assets/logo.svg';
+import AnimatedBackground from '@src:Components/AnimatedBackground';
+import { CustomButton } from '@src:Components/Buttons';
+import { Axios } from '@src:Services/Axios';
 
 export default function RegisterPage() {
   const [error, setError] = React.useState({ status: false, msg: '' });
@@ -104,7 +104,9 @@ export default function RegisterPage() {
                 disabled={isLoading}
               />
               <Message error content={error.msg} compact />
-              <MyButton loading={isLoading} onClick={handleSubmit} label="Sign Up" />
+              <CustomButton
+                styles={{color: 'primary', size: 'medium'}}
+                loading={isLoading} onClick={handleSubmit} label="Sign Up" />
             </div>
           </Form>
           <div className="form-links">

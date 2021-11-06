@@ -1,7 +1,7 @@
 import React from "react";
 import { Link, useHistory } from "react-router-dom";
 import { Icon } from "semantic-ui-react";
-import IconLogo from '../assets/icon.png';
+import IconLogo from '@src:Assets/icon.png';
 
 export default function MenuSide() {
   const history = useHistory()

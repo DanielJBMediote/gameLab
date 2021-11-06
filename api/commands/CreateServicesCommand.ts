@@ -4,7 +4,6 @@ import path from 'path';
 // import Helpers from '@ioc:Adonis/Core/Helpers'
 
 export default class ServiceCommand extends BaseCommand {
-  
   /**
    * Command name is used to run the command
    */
@@ -60,33 +59,33 @@ export default class ServiceCommand extends BaseCommand {
 
     const fileName = name + '.ts';
 
-    if (!fileSystem.existsSync(appRoot + '/app/Services/')) fileSystem.mkdirSync(appRoot + '/app/Services/');
+    if (!fileSystem.existsSync(appRoot + '/app/Services/'))
+      fileSystem.mkdirSync(appRoot + '/app/Services/');
     fileSystem.writeFileSync(
       appRoot + '/app/Services/' + fileName,
       this.serviceTemplate(name.replace('Services', ''))
     );
-    
+
     this.logger.success(fileName + ' has been created in /App/Repositories/');
   }
 
   public async handleRepository() {
     const appRoot = path.resolve(__dirname + '../..');
     let name = this.name;
-    
-    if (name.includes('service' || 'services'))
-      name = name.replace('service', '');
-    if (name.includes('Service' || 'Services'))
-      name = name.replace('Service', '');
+
+    if (name.includes('service' || 'services')) name = name.replace('service', '');
+    if (name.includes('Service' || 'Services')) name = name.replace('Service', '');
     name = this.capitalizeString(name + 'Repository');
 
-    const fileName = name +".ts"
+    const fileName = name + '.ts';
 
     if (!fileSystem.existsSync(appRoot + '/app/Repositories/'))
       fileSystem.mkdirSync(appRoot + '/app/Repositories/');
 
     fileSystem.writeFileSync(
       appRoot + '/app/Repositories/' + fileName,
-      this.repositoryTemplate(name));
+      this.repositoryTemplate(name)
+    );
     this.logger.success(fileName + ' has been created in /App/Repositories/');
   }
 

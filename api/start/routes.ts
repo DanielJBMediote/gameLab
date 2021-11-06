@@ -20,8 +20,9 @@
 
 import Route from '@ioc:Adonis/Core/Route';
 
-Route.get('', async () => {
-  return { hello: 'world' };
+Route.post('', async({ response }) => {
+  const hello = 'Hello World';
+  return response.status(200).send(hello);
 });
 
 // Session routes --------------------------------------------------------------
@@ -38,20 +39,33 @@ Route.group(() => {
   Route.get('/:id', 'UsersController.show');
 
   Route.group(() => {
-    Route.get('/logged', 'UsersController.logged');
-    Route.get('/', 'UsersController.index');
-    Route.put('/', 'UsersController.update');
-    Route.delete('/', 'UsersController.destroy');
+    Route.get('logged', 'UsersController.logged');
+    Route.get('', 'UsersController.index');
+    Route.put(':id', 'UsersController.update');
+    Route.delete(':id', 'UsersController.destroy');
   }).middleware(['auth']);
-}).prefix('/users');
+}).prefix('users');
 
 // Profiles routes -------------------------------------------------------------
 
 Route.group(() => {
-  Route.get('/:id', 'ProfilesController.show');
-  Route.get('/usernames/:username', 'ProfilesController.show')
-}).prefix('/profiles');
+  Route.get(':id', 'ProfilesController.show');
+  Route.get('usernames/:username', 'ProfilesController.show');
+}).prefix('profiles');
+// RoomsRepository routes ------------------------------------------------------
 
 Route.group(() => {
-  Route.get('/:id', 'FilesController.show');
-}).prefix('/files');
+  Route.get('', 'RoomsController.index');
+
+  Route.group(() => {
+    Route.post('', 'RoomsController.store');
+    Route.get(':id', 'RoomsController.show');
+    Route.delete(':id', 'RoomsController.destroy');
+  }).middleware(['auth']);
+}).prefix('rooms');
+
+// files routes ----------------------------------------------------------------
+
+Route.group(() => {
+  Route.get(':id', 'FilesController.show');
+}).prefix('files');

@@ -1,10 +1,10 @@
 import React, { FormEvent } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import { Form, Input, Message } from 'semantic-ui-react';
-import { AuthContext } from '../App';
-import GameLogo from '../assets/logo.svg';
-import AnimatedBackground from '../components/AnimatedBackground';
-import { MyButton } from '../components/Button';
+import { AuthContext } from '@src:Contexts/AuthContextProvider';
+import GameLogo from '@src:Assets/logo.svg';
+import AnimatedBackground from '@src:Components/AnimatedBackground';
+import { CustomButton } from '@src:Components/Buttons';
 
 export default function LoginPage() {
   const [error, setError] = React.useState({ status: false, message: '' });
@@ -39,7 +39,7 @@ export default function LoginPage() {
   async function handleSubmit(event: FormEvent): Promise<void> {
     setIsLoading(true);
 
-    await apiSignIn(data).catch((error) => {
+    await apiSignIn(data).catch((error: { response: { status: number; }; }) => {
       if ([400, 401, 422].includes(error.response.status)) {
         setError({ status: true, message: 'Invalid username or password' });
       }
@@ -83,9 +83,9 @@ export default function LoginPage() {
                   disabled={isLoading}
                 />
                 <Message error content={error.message} floating />
-                <MyButton
+                <CustomButton
+                  styles={{ color: 'primary', size: 'medium' }}
                   className="btn-primary"
-                  color="primary"
                   onClick={handleSubmit}
                   loading={isLoading}
                   label="Sign In"

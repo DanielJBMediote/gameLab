@@ -12,7 +12,8 @@
   "settings": {
     "typescript.tsdk": "api/node_modules/typescript/lib",
     "cSpell.words": [
-      "adonisjs"
+      "adonisjs",
+      "parens"
     ]
   },
   

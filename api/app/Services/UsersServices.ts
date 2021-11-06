@@ -1,23 +1,25 @@
 import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext';
 import Database from '@ioc:Adonis/Lucid/Database';
-import { Exception } from '@poppinss/utils';
+import AvatarProfiles from 'App/Models/AvatarProfiles';
+import Files from 'App/Models/Files';
 import Users from 'App/Models/Users';
 import ProfilesRepository from 'App/Repositories/ProfilesRepository';
 import UsersRepository from 'App/Repositories/UsersRepository';
-import { CreateFile } from './FilesServices';
-import { CreateProfile, UpdateProfile } from './ProfilesServices';
+import { CreateFile } from 'App/Services/FilesServices';
+import fileSystem from 'fs';
+import path from 'path';
 
 export class ReadUser {
   async execute({ params, response }: HttpContextContract): Promise<Users | void> {
     try {
       const user = await UsersRepository.findOne(params.id);
-      if (!user) throw new Error('User not found')
-      return response.send(user)
+      if (!user) throw new Error('User not found');
+      return response.send(user);
     } catch (error) {
-      return response.status(400).send({message: error.message});
+      return response.status(400).send({ message: error.message });
     }
   }
-  
+
   async getByToken({ auth }: HttpContextContract) {
     return await UsersRepository.findOne(auth.user!.id);
   }
@@ -44,58 +46,51 @@ export class CreateUser {
   static async execute({ request, response }: HttpContextContract) {
     const data = request.body();
     const trx = await Database.transaction();
-
+    let file: any;
     try {
       const user = await UsersRepository.create(data, trx);
-
-      const file = await CreateFile.execute(request, trx);
-      // const profile = await CreateProfile.execute(data, trx);
-
-      // profile.file_id = file.id;
-      // await profile.save();
-
-      // user.profile_id = profile.id;
-      // await user.save();
-      // await UpdateProfile.execute({ file_id: file.id }, profile?.id, trx)
-
+      const { id: fileId, filename }: Files = await CreateFile.execute(request, trx);
+      file = filename;
+      const { id: profileId } = await ProfilesRepository.create({ ...data, user_id: user.id }, trx);
+      await AvatarProfiles.create({ file_id: fileId, profile_id: profileId }, { client: trx });
 
       await trx.commit();
       return response.status(201).send({ user });
     } catch (error) {
       await trx.rollback();
-      return response.status(error.status | 400).send({ error });
+      fileSystem.unlinkSync(path.resolve(__dirname, `../../tmp/uploads/${file}`));
+      return response.status(error.status | 400).send({ message: error.message } || { error });
     }
   }
 }
 
 export class UpdateUser {
-  async execute(data: Record<string, any>, { response, auth }: HttpContextContract): Promise<void> {
-    const user = await UsersRepository.findOne(auth.user!.id);
+  static async execute({ request, response, params, auth }: HttpContextContract): Promise<void> {
+    const data = request.body();
+    const userId = params.id;
+
+    if (auth.user?.id !== parseInt(userId)) throw new Error(`User ${userId} does not match`);
+
     const trx = await Database.transaction();
 
     try {
-      if (!user) {
-        throw new Exception('User not found', 400);
-      }
+      const oldUser = await UsersRepository.findOne(userId);
 
-      if (!(await UsersRepository.update(trx, user!.id, data)))
-        throw new Exception('Failed to update User', 400);
-      if (!(await ProfilesRepository.update(trx, user!.id, data)))
-        throw new Exception('Failed to update Profile', 400);
+      const newUser = await UsersRepository.update(trx, userId, data);
 
       await trx.commit();
+      return response.status(200).send({});
     } catch (error) {
       await trx.rollback();
       return response.status(error.status | 400).send({ error });
     }
-    return response.status(200).send({ message: 'User has been updated successfully' });
   }
 }
 
 export class DeleteUser {
-  async execute({ auth, response }: HttpContextContract) {
+  async execute({ params, response }: HttpContextContract) {
     try {
-      await UsersRepository.delete(auth.user!.id);
+      await UsersRepository.delete(params.id);
       return response.status(200).send({ message: 'Delete user successfully' });
     } catch (error) {
       return response.status(400).send({ error });

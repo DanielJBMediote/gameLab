@@ -1,5 +1,7 @@
 import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext';
 import { TransactionClientContract } from '@ioc:Adonis/Lucid/Database';
+import AvatarProfiles from 'App/Models/AvatarProfiles';
+import FilesRepository from 'App/Repositories/FilesRepository';
 import ProfilesRepository from 'App/Repositories/ProfilesRepository';
 /**
  * Service for ProfilesService with a basic CRUD
@@ -36,14 +38,16 @@ export class ReadProfile {
 }
 
 export class CreateProfile {
-  static async execute(data: Record<string, any>, trx: TransactionClientContract) {
-    return await ProfilesRepository.create(trx, data);
-  }
+  static async execute({}: HttpContextContract) {}
 }
 
 export class UpdateProfile {
   static async execute(data: Record<string, any>, id: number, trx: TransactionClientContract) {
-    return await ProfilesRepository.update(trx, id, data);
+    try {
+      return await ProfilesRepository.update(trx, id, data);
+    } catch (error) {
+      throw new Error(error);
+    }
   }
 }
 

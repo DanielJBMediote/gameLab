@@ -1,6 +1,6 @@
-@import "colors";
+@import '../../styles/colors.scss';
 
-button {
+button.custom-button {
   position: relative;
   display: flex;
   border: 0;

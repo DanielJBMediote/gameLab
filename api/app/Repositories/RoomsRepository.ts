@@ -1,7 +1,4 @@
-
-    /**
-    * Repository for RoomsRepository
-    */
-  export class RoomsRepository {}
-   
-   
+/**
+ * Repository for RoomsRepository
+ */
+export class RoomsRepository {}

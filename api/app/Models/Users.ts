@@ -3,11 +3,11 @@ import {
   BaseModel,
   beforeCreate,
   beforeSave,
+  BelongsTo,
+  belongsTo,
   column,
   HasMany,
   hasMany,
-  HasOne,
-  hasOne
 } from '@ioc:Adonis/Lucid/Orm';
 import Profiles from 'App/Models/Profiles';
 import Rooms from 'App/Models/Rooms';
@@ -33,13 +33,10 @@ export default class Users extends BaseModel {
   @column()
   public reset_password_token: string;
 
-  @column()
-  public profile_id: number;
+  @belongsTo(() => Profiles, { foreignKey: 'id' })
+  public profile: BelongsTo<typeof Profiles>;
 
-  @hasOne(() => Profiles, { foreignKey: 'profile_id', localKey: 'user_id' })
-  public profile: HasOne<typeof Profiles>;
-
-  @hasMany(() => Rooms)
+  @hasMany(() => Rooms, { foreignKey: 'id' })
   public rooms: HasMany<typeof Rooms>;
 
   @column.dateTime({ autoCreate: true })

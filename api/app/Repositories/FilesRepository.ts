@@ -3,18 +3,23 @@ import Files from 'App/Models/Files';
 import lodash from 'lodash';
 
 export default class FilesRepository {
-  private static fillable = ['filename', 'subtype', 'extname', 'size', 'clientname', 'type'];
+  private static fillable = ['filename',
+                             'subtype',
+                             'extname',
+                             'size',
+                             'clientname',
+                             'type'];
 
   static async findOne(id: number): Promise<Files | null> {
-
     return await Files.find(id);
   }
 
-  static async create(trx: TransactionClientContract, data: Record<string, any>) {
+  static async create(data: Record<string, any>, trx: TransactionClientContract) {
     const file = new Files();
-    const newData = lodash.pick(data, this.fillable)
-    
-    file.fill({...newData})
+    const newData = lodash.pick(data, this.fillable);
+    console.log(newData);
+
+    file.fill({ ...newData });
     file.useTransaction(trx);
 
     return await file.save();
@@ -22,8 +27,9 @@ export default class FilesRepository {
 
   static async update(trx: TransactionClientContract, id: number, data: Record<string, any>) {
     const file = await Files.findOrFail(id);
+    const newData = lodash.pick(data, this.fillable);
 
-    file.merge(data);
+    file.merge(newData);
     file.useTransaction(trx);
 
     return await file.save();

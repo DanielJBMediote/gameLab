@@ -1,4 +1,6 @@
 
+import './styles.scss';
+
 export default function AnimatedBackground() {
   return (
     <div className="area" >

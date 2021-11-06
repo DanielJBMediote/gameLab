@@ -1,12 +1,55 @@
 {
-  "extends": ["plugin:adonis/typescriptApp", "prettier"],
-  "plugins": ["prettier"],
+  "env": {
+    "es6": true
+  },
+  "extends": ["plugin:adonis/typescriptApp"],
+  "plugins": [],
   "rules": {
-    "prettier/prettier": ["off"],
+    // "prettier/prettier": ["error", { "printWidth": 100 }],
     "@typescript-eslint/explicit-member-accessibility": "off",
     "@typescript-eslint/naming-convention": [
       "error",
-      { "selector": "variableLike", "format": ["camelCase"] }
+      {
+        "selector": "variableLike",
+        "format": ["camelCase"]
+      }
+    ],
+    "@typescript-eslint/space-before-function-paren": ["error", "never"],
+    "no-var": "error",
+    "@typescript-eslint/semi": ["error", "always"],
+    "array-element-newline": [
+      "error",
+      {
+        "multiline": true,
+        "minItems": 5
+      }
+    ],
+    "indent": [
+      "error",
+      2,
+      {
+        "MemberExpression": 2,
+        "ObjectExpression": 1,
+        "ArrayExpression": "first",
+        "FunctionDeclaration": {
+          "parameters": "first"
+        }
+      }
+    ],
+    "no-multi-spaces": "error",
+    "space-in-parens": "error",
+    "no-multiple-empty-lines": "error",
+    "prefer-const": "error",
+    "no-use-before-define": "error",
+    "comma-dangle": [
+      "error",
+      {
+        "arrays": "never",
+        "objects": "never",
+        "imports": "never",
+        "exports": "never",
+        "functions": "never"
+      }
     ]
   }
 }

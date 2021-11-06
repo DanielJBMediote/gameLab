@@ -12,8 +12,7 @@ export default class Rooms extends BaseSchema {
       table.string('name');
       table.string('description');
       table.boolean('is_active').defaultTo(true);
-      table.string('password')
-
+      table.string('password');
 
       /**
        * Uses timestamptz for PostgreSQL and DATETIME2 for MSSQL
